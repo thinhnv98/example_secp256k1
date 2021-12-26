@@ -16,7 +16,7 @@ func (_self Route) Register() {
 	messageController := controller.MessageHandler{}
 	messageRoutes := _self.Server.Group("")
 	{
-		messageRoutes.GET("/generate-keys", messageController.GenKeys)
+		messageRoutes.POST("/generate-keys", messageController.GenKeys)
 		messageRoutes.POST("/someone-create-mess", messageController.SomeoneCreate)
 		messageRoutes.POST("/i-create-mess", messageController.ICreate)
 		messageRoutes.POST("/decrypt-mess", messageController.DecryptMessage)

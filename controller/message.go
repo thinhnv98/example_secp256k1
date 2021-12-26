@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/hex"
+	"errors"
 	"net/http"
 
 	"github.com/decred/dcrd/dcrec/secp256k1"
@@ -89,11 +90,27 @@ func (_self MessageHandler) ICreate(c *gin.Context) {
 		"signature":    hex.EncodeToString(signature.Serialize()),
 		"message_hash": hex.EncodeToString(messageBytes),
 	})
-
 }
 
 func (_self MessageHandler) GenKeys(c *gin.Context) {
-	randomPrivateKey, err := secp256k1.GeneratePrivateKey()
+	var seed GenKeysRequest
+	err := c.Bind(&seed)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	seedBytes, err := hex.DecodeString(seed.Seed)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": errors.New("seed require hex"),
+		})
+		return
+	}
+
+	privateKey, publicKey := secp256k1.PrivKeyFromBytes(seedBytes)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -103,8 +120,8 @@ func (_self MessageHandler) GenKeys(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"succeed":               true,
-		"private_key":           hex.EncodeToString(randomPrivateKey.Serialize()),
-		"public_key_compressed": hex.EncodeToString(randomPrivateKey.PubKey().SerializeCompressed()),
+		"private_key":           hex.EncodeToString(privateKey.Serialize()),
+		"public_key_compressed": hex.EncodeToString(publicKey.Serialize()),
 	})
 }
 

@@ -20,3 +20,7 @@ type VerifyMessRequest struct {
 	Signature        string `json:"signature"`
 	PublicKey        string `json:"public_key"`
 }
+
+type GenKeysRequest struct {
+	Seed string `json:"seed"`
+}

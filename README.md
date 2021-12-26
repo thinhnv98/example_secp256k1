@@ -14,6 +14,14 @@ make run
 GET  /generate-keys
 ```
 
+* Request body:
+```json
+{
+  //hex
+  "seed": "c491c3a279206cc3a02070726976617465206b6579207365656420736563726574"
+}
+```
+
 * Response body:
 ```json
 {
